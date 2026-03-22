@@ -22,12 +22,12 @@ export default function LocationPicker({
   onChangeLng,
   label = 'LOCATION',
 }: Props) {
-  const [mode, setMode]       = useState<'manual' | 'search' | 'pick'>('manual')
-  const [query, setQuery]     = useState('')
+  const [mode, setMode] = useState<'manual' | 'search' | 'pick'>('manual')
+  const [query, setQuery] = useState('')
   const [results, setResults] = useState<NominatimResult[]>([])
   const [searching, setSearching] = useState(false)
   const [pickActive, setPickActive] = useState(false)
-  const [pickError, setPickError]   = useState('')
+  const [pickError, setPickError] = useState('')
   const searchTimeout = useRef<ReturnType<typeof setTimeout>>()
 
   const handleSearch = async (q: string) => {
@@ -41,7 +41,7 @@ export default function LocationPicker({
           `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5`,
           { headers: { 'Accept-Language': 'en' } }
         )
-        const data = await res.json()
+        const data: NominatimResult[] = await res.json()
         setResults(data)
       } catch {
         setResults([])
@@ -69,18 +69,18 @@ export default function LocationPicker({
       return
     }
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        onChangeLat(pos.coords.latitude.toFixed(5))
-        onChangeLng(pos.coords.longitude.toFixed(5))
-        setPickActive(false)
-      },
-      (_err) => {
-        setPickError('Could not get location. Enter manually or use search.')
-        setPickActive(false)
-      },
-      { timeout: 5000 }
-    )
+    const onSuccess = (pos: GeolocationPosition) => {
+      onChangeLat(pos.coords.latitude.toFixed(5))
+      onChangeLng(pos.coords.longitude.toFixed(5))
+      setPickActive(false)
+    }
+
+    const onError = (_err: GeolocationPositionError) => {
+      setPickError('Could not get location. Use manual or search.')
+      setPickActive(false)
+    }
+
+    navigator.geolocation.getCurrentPosition(onSuccess, onError, { timeout: 5000 })
   }
 
   return (
@@ -149,11 +149,7 @@ export default function LocationPicker({
           {results.length > 0 && (
             <div className={styles.results}>
               {results.map((r, i) => (
-                <div
-                  key={i}
-                  className={styles.result}
-                  onClick={() => pickResult(r)}
-                >
+                <div key={i} className={styles.result} onClick={() => pickResult(r)}>
                   <div className={styles.resultName}>
                     {r.display_name.split(',').slice(0, 2).join(', ')}
                   </div>
