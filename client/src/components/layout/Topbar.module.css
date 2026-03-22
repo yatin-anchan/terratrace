@@ -1,0 +1,92 @@
+.topbar {
+  height: 34px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0;
+  flex-shrink: 0;
+  z-index: 100;
+}
+
+.brand {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--accent);
+  padding: 0 16px;
+  border-right: 1px solid var(--border);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.item {
+  padding: 0 12px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text2);
+  font-size: 10px;
+  letter-spacing: 1px;
+  border-right: 1px solid var(--border);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.opName {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.right {
+  margin-left: auto;
+  display: flex;
+  height: 100%;
+}
+
+.backBtn {
+  padding: 0 14px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--border);
+  color: var(--text2);
+  font-size: 10px;
+  letter-spacing: 1px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  height: 100%;
+  transition: color 0.15s;
+}
+
+.backBtn:hover {
+  color: var(--accent);
+}
+
+.logoutBtn {
+  padding: 0 14px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--border);
+  color: var(--text3);
+  font-size: 10px;
+  letter-spacing: 1px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  height: 100%;
+  transition: color 0.15s;
+}
+
+.logoutBtn:hover {
+  color: var(--danger);
+}

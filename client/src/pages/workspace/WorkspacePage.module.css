@@ -1,0 +1,51 @@
+.page {
+  display: grid;
+  grid-template-rows: 34px 1fr 26px;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.mapArea {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  background: #0d1628;
+  min-width: 0;
+}
+
+/* Tab bar — always scrollable, never wraps */
+.tabBar {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  flex-shrink: 0;
+  scrollbar-width: none;
+  background: var(--bg2);
+}
+.tabBar::-webkit-scrollbar { display: none; }
+
+.tab {
+  padding: 8px 12px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text3);
+  cursor: pointer;
+  white-space: nowrap;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  font-family: var(--font-mono);
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+.tab:hover { color: var(--text2); }
+.tabActive { color: var(--accent); border-bottom-color: var(--accent); }
+
+.tabContent {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.tabContent::-webkit-scrollbar { width: 3px; }
+.tabContent::-webkit-scrollbar-thumb { background: var(--border2); }

@@ -1,0 +1,70 @@
+@import './variables.css';
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
+#root {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+input, select, textarea, button {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text);
+}
+
+button { cursor: pointer; }
+
+/* MapLibre popup global */
+:global(.maplibregl-popup-content) {
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+:global(.maplibregl-popup-tip) { display: none !important; }
+
+/* Popup inner styles */
+:global(.tt-popup-inner) {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #d4d8e8;
+  background: #0f1219;
+  padding: 10px 12px;
+  border: 1px solid #1f2435;
+  min-width: 160px;
+  border-radius: 2px;
+}
+:global(.tt-popup-title) {
+  color: #e8c87a;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  font-size: 11px;
+}
+:global(.tt-popup-row) {
+  color: #7a829e;
+  margin-bottom: 3px;
+  font-size: 11px;
+}
+:global(.tt-popup-row span) { color: #e8c87a; }

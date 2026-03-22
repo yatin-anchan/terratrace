@@ -1,0 +1,234 @@
+.page {
+  display: grid;
+  grid-template-rows: 34px auto 1fr 26px;
+  height: 100vh;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+}
+
+.search {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-size: 12px;
+  padding: 7px 10px;
+  outline: none;
+  border-radius: var(--radius);
+  transition: border-color 0.15s;
+}
+
+.search:focus { border-color: rgba(232, 200, 122, 0.4); }
+
+.btnNew {
+  padding: 7px 14px;
+  background: var(--accent);
+  color: #080a10;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.btnDel {
+  padding: 7px 14px;
+  background: transparent;
+  border: 1px solid rgba(204, 68, 68, 0.4);
+  color: var(--danger);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  border-radius: var(--radius);
+  white-space: nowrap;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  align-content: start;
+  overflow-y: auto;
+  padding: 1px;
+}
+
+.card {
+  background: var(--bg2);
+  padding: 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border: 2px solid transparent;
+}
+
+.card:hover { background: var(--bg3); }
+
+.cardSel {
+  background: var(--bg3);
+  border-color: rgba(232, 200, 122, 0.3);
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.cardCheck { flex-shrink: 0; }
+
+.cardName {
+  font-size: 13px;
+  color: #fff;
+  font-weight: 500;
+  letter-spacing: 1px;
+  flex: 1;
+}
+
+.cardMeta {
+  font-size: 10px;
+  color: var(--text2);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.progBg {
+  height: 2px;
+  background: var(--border2);
+  border-radius: 1px;
+}
+
+.progFill {
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+.cardActions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.btnOpen {
+  font-size: 9px;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid rgba(232, 200, 122, 0.4);
+  color: var(--accent);
+  cursor: pointer;
+  letter-spacing: 1px;
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  transition: border-color 0.15s;
+}
+
+.btnOpen:hover { border-color: var(--accent); }
+
+.btnDelCard {
+  font-size: 9px;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid rgba(204, 68, 68, 0.3);
+  color: var(--danger);
+  cursor: pointer;
+  letter-spacing: 1px;
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+}
+
+.btnCancel {
+  padding: 7px 14px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  border-radius: var(--radius);
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text3);
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-family: var(--font-mono);
+  gap: 8px;
+}
+
+.empty span {
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.newModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.newCard {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  padding: 28px;
+  width: 360px;
+  border-radius: var(--radius-md);
+}
+
+.newTitle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.newLabel {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--text3);
+  margin-bottom: 5px;
+  font-family: var(--font-mono);
+}
+
+.newInput {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-size: 12px;
+  padding: 9px 10px;
+  outline: none;
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+  transition: border-color 0.15s;
+}
+
+.newInput:focus { border-color: rgba(232, 200, 122, 0.5); }
+
+.newActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}

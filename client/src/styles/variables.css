@@ -1,0 +1,23 @@
+:root {
+  --bg: #0b0d14;
+  --bg2: #0f1219;
+  --bg3: #13161f;
+  --bg4: #181c27;
+  --bg5: #1e2333;
+  --border: #1f2435;
+  --border2: #2a3048;
+  --text: #d4d8e8;
+  --text2: #7a829e;
+  --text3: #3d4460;
+  --accent: #e8c87a;
+  --accent2: #b89a50;
+  --danger: #cc4444;
+  --success: #3a9e6a;
+  --warn: #c0803a;
+  --map-bg: #0d1628;
+  --map-tint: rgba(30, 60, 120, 0.15);
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Courier New', monospace;
+  --radius: 2px;
+  --radius-md: 4px;
+}

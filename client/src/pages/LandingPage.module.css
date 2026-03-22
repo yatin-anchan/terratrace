@@ -1,0 +1,762 @@
+/* ============================================================
+   TERRATRACE — LANDING PAGE
+   ============================================================ */
+
+.page {
+  min-height: 100vh;
+  background: #080a12;
+  color: #d4d8e8;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Particle canvas */
+.particleCanvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Noise overlay */
+.noise {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 48px;
+  gap: 40px;
+  transition: background 0.3s, border-color 0.3s;
+  border-bottom: 1px solid transparent;
+}
+
+.navScrolled {
+  background: rgba(8, 10, 18, 0.92);
+  border-bottom-color: rgba(31, 36, 53, 0.8);
+  backdrop-filter: blur(12px);
+}
+
+.navBrand {
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.navBrand span { color: #e8c87a; }
+
+.navLinks {
+  display: flex;
+  gap: 32px;
+  flex: 1;
+}
+
+.navLinks a {
+  font-size: 13px;
+  color: #7a829e;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+
+.navLinks a:hover { color: #d4d8e8; }
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navLogin {
+  padding: 8px 18px;
+  background: transparent;
+  border: 1px solid rgba(232, 200, 122, 0.3);
+  color: #e8c87a;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.navLogin:hover {
+  background: rgba(232, 200, 122, 0.06);
+  border-color: #e8c87a;
+}
+
+.navCta {
+  padding: 8px 20px;
+  background: #e8c87a;
+  border: none;
+  color: #080a12;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: opacity 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.navCta:hover { opacity: 0.85; }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 48px 80px;
+  text-align: center;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.heroGrid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(232, 200, 122, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 200, 122, 0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+.heroGlow {
+  position: absolute;
+  width: 700px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(30, 60, 140, 0.2) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+.heroGlow2 {
+  position: absolute;
+  width: 400px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(232, 200, 122, 0.06) 0%, transparent 70%);
+  top: 30%;
+  left: 60%;
+  pointer-events: none;
+  animation: glowPulse 6s ease-in-out infinite reverse;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+}
+
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(232, 200, 122, 0.08);
+  border: 1px solid rgba(232, 200, 122, 0.25);
+  color: #e8c87a;
+  font-size: 11px;
+  letter-spacing: 3px;
+  padding: 6px 16px;
+  border-radius: 2px;
+  margin-bottom: 40px;
+  font-family: 'Courier New', monospace;
+  animation: fadeInDown 0.8s ease both;
+}
+
+.heroBadgeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e8c87a;
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.heroTitle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28px;
+  line-height: 1;
+}
+
+.heroTitleLine1 {
+  font-size: clamp(48px, 9vw, 96px);
+  font-weight: 300;
+  letter-spacing: 12px;
+  color: #d4d8e8;
+  font-family: 'Courier New', monospace;
+  animation: fadeInUp 0.9s ease 0.1s both;
+}
+
+.heroTitleLine2 {
+  font-size: clamp(64px, 13vw, 140px);
+  font-weight: 800;
+  letter-spacing: 8px;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  animation: fadeInUp 0.9s ease 0.2s both;
+  text-shadow: 0 0 80px rgba(232, 200, 122, 0.2);
+}
+
+.heroTitleLine3 {
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 300;
+  letter-spacing: 16px;
+  color: #e8c87a;
+  font-family: 'Courier New', monospace;
+  animation: fadeInUp 0.9s ease 0.3s both;
+}
+
+.heroDesc {
+  font-size: 16px;
+  color: #7a829e;
+  max-width: 520px;
+  line-height: 1.8;
+  margin-bottom: 40px;
+  animation: fadeInUp 0.9s ease 0.4s both;
+}
+
+.heroActions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-bottom: 64px;
+  animation: fadeInUp 0.9s ease 0.5s both;
+}
+
+.heroCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  background: #e8c87a;
+  color: #080a12;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.heroCta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(-100%);
+  transition: transform 0.3s;
+}
+
+.heroCta:hover::before { transform: translateX(0); }
+
+.heroCtaArrow {
+  transition: transform 0.2s;
+}
+
+.heroCta:hover .heroCtaArrow { transform: translateX(4px); }
+
+.heroSecondary {
+  padding: 14px 32px;
+  background: transparent;
+  border: 1px solid rgba(212, 216, 232, 0.2);
+  color: #d4d8e8;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.heroSecondary:hover {
+  border-color: rgba(212, 216, 232, 0.5);
+  background: rgba(212, 216, 232, 0.04);
+}
+
+.heroStats {
+  display: flex;
+  gap: 0;
+  border: 1px solid rgba(31, 36, 53, 0.8);
+  animation: fadeInUp 0.9s ease 0.6s both;
+}
+
+.heroStat {
+  padding: 20px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border-right: 1px solid rgba(31, 36, 53, 0.8);
+  background: rgba(15, 18, 25, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.heroStat:last-child { border-right: none; }
+
+.heroStatNum {
+  font-family: 'Courier New', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  color: #e8c87a;
+}
+
+.heroStatLabel {
+  font-size: 11px;
+  color: #3d4460;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.heroScroll {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: #3d4460;
+  font-family: 'Courier New', monospace;
+  animation: fadeIn 1s ease 1.5s both;
+}
+
+.heroScrollLine {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, #e8c87a, transparent);
+  animation: scrollLine 2s ease-in-out infinite;
+}
+
+@keyframes scrollLine {
+  0% { transform: scaleY(0); transform-origin: top; }
+  50% { transform: scaleY(1); transform-origin: top; }
+  51% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+/* ============================================================
+   SECTIONS
+   ============================================================ */
+
+.section {
+  position: relative;
+  z-index: 2;
+  padding: 100px 48px;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.sectionVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.sectionAlt {
+  background: rgba(13, 16, 26, 0.7);
+  border-top: 1px solid rgba(31, 36, 53, 0.6);
+  border-bottom: 1px solid rgba(31, 36, 53, 0.6);
+}
+
+.sectionInner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.sectionTag {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: #e8c87a;
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+}
+
+.sectionDesc {
+  font-size: 15px;
+  color: #7a829e;
+  max-width: 480px;
+  line-height: 1.8;
+  margin-bottom: 56px;
+}
+
+/* ============================================================
+   FEATURES GRID
+   ============================================================ */
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(31, 36, 53, 0.5);
+}
+
+.featureCard {
+  background: rgba(8, 10, 18, 0.9);
+  padding: 36px 32px;
+  transition: background 0.2s;
+  animation: fadeInUp 0.6s ease both;
+}
+
+.featureCard:hover {
+  background: rgba(15, 18, 30, 0.95);
+}
+
+.featureIcon {
+  font-size: 24px;
+  color: #e8c87a;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.featureTitle {
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 10px;
+  letter-spacing: -0.2px;
+}
+
+.featureDesc {
+  font-size: 13px;
+  color: #7a829e;
+  line-height: 1.8;
+}
+
+/* ============================================================
+   ENVIRONMENTS
+   ============================================================ */
+
+.envList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.envRow {
+  display: grid;
+  grid-template-columns: 48px 180px 1fr auto;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 0;
+  border-bottom: 1px solid rgba(31, 36, 53, 0.5);
+  animation: fadeInUp 0.5s ease both;
+  transition: background 0.2s;
+  cursor: default;
+}
+
+.envRow:hover .envLine {
+  width: 60px;
+  background: #e8c87a;
+}
+
+.envNum {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #3d4460;
+  letter-spacing: 1px;
+}
+
+.envLabel {
+  font-family: 'Courier New', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #fff;
+}
+
+.envDesc {
+  font-size: 13px;
+  color: #7a829e;
+}
+
+.envLine {
+  width: 30px;
+  height: 1px;
+  background: #2a3048;
+  transition: all 0.3s;
+}
+
+/* ============================================================
+   HOW IT WORKS
+   ============================================================ */
+
+.howSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+.howStep {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 32px;
+  padding: 32px 0;
+  border-bottom: 1px solid rgba(31, 36, 53, 0.4);
+  position: relative;
+  animation: fadeInUp 0.6s ease both;
+}
+
+.howStepNum {
+  font-family: 'Courier New', monospace;
+  font-size: 36px;
+  font-weight: 700;
+  color: rgba(232, 200, 122, 0.15);
+  line-height: 1;
+  padding-top: 4px;
+  transition: color 0.2s;
+}
+
+.howStep:hover .howStepNum {
+  color: rgba(232, 200, 122, 0.5);
+}
+
+.howStepContent { padding-top: 4px; }
+
+.howStepTitle {
+  font-size: 19px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.howStepDesc {
+  font-size: 14px;
+  color: #7a829e;
+  line-height: 1.8;
+  max-width: 560px;
+}
+
+/* ============================================================
+   ROLES
+   ============================================================ */
+
+.rolesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: rgba(31, 36, 53, 0.5);
+}
+
+.roleCard {
+  background: rgba(8, 10, 18, 0.9);
+  padding: 36px 32px;
+  animation: fadeInUp 0.6s ease both;
+  transition: background 0.2s;
+}
+
+.roleCard:hover { background: rgba(15, 18, 30, 0.95); }
+
+.roleNum {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #e8c87a;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.roleTitle {
+  font-size: 19px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.roleDesc {
+  font-size: 13px;
+  color: #7a829e;
+  line-height: 1.8;
+}
+
+/* ============================================================
+   CTA SECTION
+   ============================================================ */
+
+.ctaSection {
+  text-align: center;
+  overflow: hidden;
+}
+
+.ctaGlow {
+  position: absolute;
+  width: 600px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(232, 200, 122, 0.07) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.ctaTitle {
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.ctaDesc {
+  font-size: 15px;
+  color: #7a829e;
+  margin-bottom: 40px;
+  line-height: 1.8;
+}
+
+.ctaBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 40px;
+  background: #e8c87a;
+  color: #080a12;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: opacity 0.2s;
+}
+
+.ctaBtn:hover { opacity: 0.85; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.footer {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 60px 48px;
+  border-top: 1px solid rgba(31, 36, 53, 0.6);
+  background: rgba(6, 8, 14, 0.8);
+}
+
+.footerBrand {
+  font-family: 'Courier New', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 5px;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.footerBrand span { color: #e8c87a; }
+
+.footerSub {
+  font-size: 12px;
+  color: #3d4460;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.footerNote {
+  font-size: 12px;
+  color: #3d4460;
+  margin-bottom: 28px;
+}
+
+.footerLine {
+  width: 60px;
+  height: 1px;
+  background: rgba(31, 36, 53, 0.8);
+  margin: 0 auto 20px;
+}
+
+.footerCopy {
+  font-size: 11px;
+  color: #2a3048;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 900px) {
+  .nav { padding: 0 24px; }
+  .navLinks { display: none; }
+  .hero { padding: 100px 24px 60px; }
+  .heroStats { flex-direction: column; }
+  .heroStat { border-right: none; border-bottom: 1px solid rgba(31,36,53,0.8); }
+  .section { padding: 60px 24px; }
+  .featuresGrid { grid-template-columns: 1fr; }
+  .rolesGrid { grid-template-columns: 1fr; }
+  .envRow { grid-template-columns: 40px 1fr; }
+  .envDesc { display: none; }
+  .envLine { display: none; }
+  .howStep { grid-template-columns: 50px 1fr; gap: 16px; }
+}
