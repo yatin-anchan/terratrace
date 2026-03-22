@@ -5,6 +5,7 @@ import { getOperations, deleteOperation, createOperation } from '../../api/opera
 import Topbar from '../../components/layout/Topbar'
 import StatusBar from '../../components/layout/StatusBar'
 import Badge from '../../components/ui/Badge'
+import LocationPicker from '../../components/ui/LocationPicker'
 import type { Operation } from '../../types'
 import styles from './OperationsPage.module.css'
 
@@ -12,26 +13,28 @@ export default function OperationsPage() {
   const navigate = useNavigate()
   const { operations, setOperations, removeOperation, addOperation, selectOperation } =
     useOperationStore()
-  const [search, setSearch] = useState('')
+
+  const [search, setSearch]   = useState('')
   const [selected, setSelected] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [showNew, setShowNew] = useState(false)
-  const [newName, setNewName] = useState('')
+
+  const [newName,    setNewName]    = useState('')
   const [newTerrain, setNewTerrain] = useState('Forest')
+  const [newRadius,  setNewRadius]  = useState('10')
+  const [newLat,     setNewLat]     = useState('')
+  const [newLng,     setNewLng]     = useState('')
 
   useEffect(() => {
-  getOperations()
-    .then(setOperations)
-    .catch((err) => {
-      console.error('Failed to load operations:', err)
-      // Don't redirect — just show empty state
-    })
-    .finally(() => setLoading(false))
-}, [setOperations])
+    getOperations()
+      .then(setOperations)
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [setOperations])
 
   const filtered = operations.filter((o) =>
     o.name.toLowerCase().includes(search.toLowerCase()) ||
-    o.terrainRegion?.toLowerCase().includes(search.toLowerCase())
+    (o.terrainRegion ?? '').toLowerCase().includes(search.toLowerCase())
   )
 
   const handleOpen = (op: Operation) => {
@@ -61,10 +64,19 @@ export default function OperationsPage() {
       terrainRegion: newTerrain,
       status: 'draft',
       operationalDays: 7,
+      searchRadius: parseFloat(newRadius) || 10,
+      areaOfInterest: newLat && newLng
+        ? { lat: parseFloat(newLat), lng: parseFloat(newLng) }
+        : null,
     })
     addOperation(op)
+    selectOperation(op)
     setShowNew(false)
     setNewName('')
+    setNewLat('')
+    setNewLng('')
+    setNewRadius('10')
+    setNewTerrain('Forest')
   }
 
   const toggleSelect = (id: string) =>
@@ -75,10 +87,11 @@ export default function OperationsPage() {
   return (
     <div className={styles.page}>
       <Topbar />
+
       <div className={styles.toolbar}>
         <input
           className={styles.search}
-          placeholder="Search operations by name, terrain, subject..."
+          placeholder="Search operations by name or terrain..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -96,6 +109,7 @@ export default function OperationsPage() {
         <div className={styles.newModal}>
           <div className={styles.newCard}>
             <p className={styles.newTitle}>NEW OPERATION</p>
+
             <label className={styles.newLabel}>OPERATION NAME</label>
             <input
               className={styles.newInput}
@@ -104,6 +118,7 @@ export default function OperationsPage() {
               onChange={(e) => setNewName(e.target.value)}
               autoFocus
             />
+
             <label className={styles.newLabel}>TERRAIN</label>
             <select
               className={styles.newInput}
@@ -116,12 +131,36 @@ export default function OperationsPage() {
               <option>Highland</option>
               <option>Rural</option>
               <option>Desert</option>
+              <option>Mixed</option>
             </select>
+
+            <label className={styles.newLabel}>SEARCH RADIUS (km)</label>
+            <input
+              className={styles.newInput}
+              type="number"
+              placeholder="10"
+              value={newRadius}
+              onChange={(e) => setNewRadius(e.target.value)}
+            />
+
+            <div style={{ marginBottom: 14 }}>
+              <LocationPicker
+                label="AREA OF INTEREST (OPERATION CENTER)"
+                lat={newLat}
+                lng={newLng}
+                onChangeLat={setNewLat}
+                onChangeLng={setNewLng}
+              />
+            </div>
+
             <div className={styles.newActions}>
               <button className={styles.btnNew} onClick={handleCreate}>
                 CREATE
               </button>
-              <button className={styles.btnCancel} onClick={() => setShowNew(false)}>
+              <button
+                className={styles.btnCancel}
+                onClick={() => setShowNew(false)}
+              >
                 CANCEL
               </button>
             </div>
@@ -158,12 +197,14 @@ export default function OperationsPage() {
               </div>
               <div className={styles.cardMeta}>
                 <span>{op.terrainRegion || 'Unknown terrain'}</span>
-                <span>Day {1} of {op.operationalDays || 7}</span>
+                <span>{op.searchRadius ? `${op.searchRadius}km radius` : ''}</span>
               </div>
               <div className={styles.progBg}>
                 <div
                   className={styles.progFill}
-                  style={{ width: `${Math.min(100, (1 / (op.operationalDays || 7)) * 100)}%` }}
+                  style={{
+                    width: `${Math.min(100, (1 / (op.operationalDays || 7)) * 100)}%`,
+                  }}
                 />
               </div>
               <div className={styles.cardActions}>
@@ -184,6 +225,7 @@ export default function OperationsPage() {
           ))}
         </div>
       )}
+
       <StatusBar />
     </div>
   )
