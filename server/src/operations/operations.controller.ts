@@ -35,4 +35,9 @@ export class OperationsController {
   remove(@Param('id') id: string) {
     return this.ops.remove(id)
   }
+  @Get(':id/export')
+async export(@Param('id') id: string) {
+  const op = await this.ops.findOne(id)
+  return { operation: op, exportedAt: new Date().toISOString() }
+}
 }
