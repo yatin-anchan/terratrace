@@ -55,28 +55,27 @@ export default function LocationPicker({ lat, lng, onChangeLat, onChangeLng, lab
   // For "pick on map" we use browser geolocation as a fallback
   // and show instructions to copy from the map
   const handlePickMode = () => {
-    setMode('pick')
-    setPickActive(true)
-    setPickError('')
-    // Try geolocation as a starting point
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          onChangeLat(pos.coords.latitude.toFixed(5))
-          onChangeLng(pos.coords.longitude.toFixed(5))
-          setPickActive(false)
-        },
-        () => {
-          setPickError('Could not get location. Enter manually or search.')
-          setPickActive(false)
-        },
-        { timeout: 5000 }
-      )
-    } else {
-      setPickError('Geolocation not supported. Use manual or search.')
-      setPickActive(false)
-    }
+  setMode('pick')
+  setPickActive(true)
+  setPickError('')
+  if (!navigator.geolocation) {
+    setPickError('Geolocation not supported. Use manual or search.')
+    setPickActive(false)
+    return
   }
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      onChangeLat(pos.coords.latitude.toFixed(5))
+      onChangeLng(pos.coords.longitude.toFixed(5))
+      setPickActive(false)
+    },
+    (_err) => {
+      setPickError('Could not get location. Enter manually or search.')
+      setPickActive(false)
+    },
+    { timeout: 5000 }
+  )
+}
 
   return (
     <div className={styles.wrap}>
