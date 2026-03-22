@@ -15,13 +15,7 @@ interface NominatimResult {
   lon: string
 }
 
-export default function LocationPicker({
-  lat,
-  lng,
-  onChangeLat,
-  onChangeLng,
-  label = 'LOCATION',
-}: Props) {
+export default function LocationPicker({ lat, lng, onChangeLat, onChangeLng, label = 'LOCATION' }: Props) {
   const [mode, setMode] = useState<'manual' | 'search' | 'pick'>('manual')
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<NominatimResult[]>([])
@@ -37,17 +31,11 @@ export default function LocationPicker({
     searchTimeout.current = setTimeout(async () => {
       setSearching(true)
       try {
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5`,
-          { headers: { 'Accept-Language': 'en' } }
-        )
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5`, { headers: { 'Accept-Language': 'en' } })
         const data: NominatimResult[] = await res.json()
         setResults(data)
-      } catch {
-        setResults([])
-      } finally {
-        setSearching(false)
-      }
+      } catch { setResults([]) }
+      finally { setSearching(false) }
     }, 400)
   }
 
@@ -62,24 +50,20 @@ export default function LocationPicker({
     setMode('pick')
     setPickActive(true)
     setPickError('')
-
     if (!navigator.geolocation) {
-      setPickError('Geolocation not supported. Use manual or search.')
+      setPickError('Geolocation not supported.')
       setPickActive(false)
       return
     }
-
     const onSuccess = (pos: GeolocationPosition) => {
       onChangeLat(pos.coords.latitude.toFixed(5))
       onChangeLng(pos.coords.longitude.toFixed(5))
       setPickActive(false)
     }
-
-    const onError = (_err: GeolocationPositionError) => {
-      setPickError('Could not get location. Use manual or search.')
+    const onError = (_e: GeolocationPositionError) => {
+      setPickError('Could not get location.')
       setPickActive(false)
     }
-
     navigator.geolocation.getCurrentPosition(onSuccess, onError, { timeout: 5000 })
   }
 
@@ -88,121 +72,43 @@ export default function LocationPicker({
       <div className={styles.header}>
         <span className={styles.label}>{label}</span>
         <div className={styles.modes}>
-          <button
-            type="button"
-            className={`${styles.modeBtn} ${mode === 'manual' ? styles.modeBtnActive : ''}`}
-            onClick={() => setMode('manual')}
-          >
-            MANUAL
-          </button>
-          <button
-            type="button"
-            className={`${styles.modeBtn} ${mode === 'search' ? styles.modeBtnActive : ''}`}
-            onClick={() => setMode('search')}
-          >
-            SEARCH
-          </button>
-          <button
-            type="button"
-            className={`${styles.modeBtn} ${mode === 'pick' ? styles.modeBtnActive : ''}`}
-            onClick={handlePickMode}
-          >
-            MY LOCATION
-          </button>
+          <button type="button" className={`${styles.modeBtn} ${mode==='manual'?styles.modeBtnActive:''}`} onClick={() => setMode('manual')}>MANUAL</button>
+          <button type="button" className={`${styles.modeBtn} ${mode==='search'?styles.modeBtnActive:''}`} onClick={() => setMode('search')}>SEARCH</button>
+          <button type="button" className={`${styles.modeBtn} ${mode==='pick'?styles.modeBtnActive:''}`} onClick={handlePickMode}>MY LOCATION</button>
         </div>
       </div>
-
       {mode === 'manual' && (
         <div className={styles.coords}>
-          <div className={styles.coordField}>
-            <span className={styles.coordLabel}>LAT</span>
-            <input
-              className={styles.coordInput}
-              placeholder="16.4234"
-              value={lat}
-              onChange={(e) => onChangeLat(e.target.value)}
-            />
-          </div>
-          <div className={styles.coordField}>
-            <span className={styles.coordLabel}>LNG</span>
-            <input
-              className={styles.coordInput}
-              placeholder="73.8812"
-              value={lng}
-              onChange={(e) => onChangeLng(e.target.value)}
-            />
-          </div>
+          <div className={styles.coordField}><span className={styles.coordLabel}>LAT</span><input className={styles.coordInput} placeholder="16.4234" value={lat} onChange={(e) => onChangeLat(e.target.value)} /></div>
+          <div className={styles.coordField}><span className={styles.coordLabel}>LNG</span><input className={styles.coordInput} placeholder="73.8812" value={lng} onChange={(e) => onChangeLng(e.target.value)} /></div>
         </div>
       )}
-
       {mode === 'search' && (
         <div className={styles.searchWrap}>
-          <input
-            className={styles.searchInput}
-            placeholder="Search place, address, landmark..."
-            value={query}
-            onChange={(e) => handleSearch(e.target.value)}
-          />
-          {searching && (
-            <div className={styles.searchNote}>Searching...</div>
-          )}
+          <input className={styles.searchInput} placeholder="Search place or address..." value={query} onChange={(e) => handleSearch(e.target.value)} />
+          {searching && <div className={styles.searchNote}>Searching...</div>}
           {results.length > 0 && (
             <div className={styles.results}>
               {results.map((r, i) => (
                 <div key={i} className={styles.result} onClick={() => pickResult(r)}>
-                  <div className={styles.resultName}>
-                    {r.display_name.split(',').slice(0, 2).join(', ')}
-                  </div>
-                  <div className={styles.resultCoords}>
-                    {parseFloat(r.lat).toFixed(4)}N Â· {parseFloat(r.lon).toFixed(4)}E
-                  </div>
+                  <div className={styles.resultName}>{r.display_name.split(',').slice(0,2).join(', ')}</div>
+                  <div className={styles.resultCoords}>{parseFloat(r.lat).toFixed(4)}N · {parseFloat(r.lon).toFixed(4)}E</div>
                 </div>
               ))}
             </div>
           )}
-          {lat && lng && (
-            <div className={styles.selectedCoords}>
-              Selected: {lat}N Â· {lng}E
-            </div>
-          )}
+          {lat && lng && <div className={styles.selectedCoords}>Selected: {lat}N · {lng}E</div>}
         </div>
       )}
-
       {mode === 'pick' && (
         <div className={styles.pickWrap}>
-          {pickActive && (
-            <div className={styles.searchNote}>Getting your location...</div>
-          )}
-          {pickError && (
-            <div className={styles.pickError}>{pickError}</div>
-          )}
-          {lat && lng && !pickActive && (
-            <div className={styles.selectedCoords}>
-              Located: {lat}N Â· {lng}E
-            </div>
-          )}
-          {(pickError || (!pickActive && lat && lng)) && (
-            <div className={styles.coords} style={{ marginTop: 6 }}>
-              <div className={styles.coordField}>
-                <span className={styles.coordLabel}>LAT</span>
-                <input
-                  className={styles.coordInput}
-                  placeholder="16.4234"
-                  value={lat}
-                  onChange={(e) => onChangeLat(e.target.value)}
-                />
-              </div>
-              <div className={styles.coordField}>
-                <span className={styles.coordLabel}>LNG</span>
-                <input
-                  className={styles.coordInput}
-                  placeholder="73.8812"
-                  value={lng}
-                  onChange={(e) => onChangeLng(e.target.value)}
-                />
-              </div>
-            </div>
-          )}
+          {pickActive && <div className={styles.searchNote}>Getting your location...</div>}
+          {pickError && <div className={styles.pickError}>{pickError}</div>}
+          {lat && lng && !pickActive && <div className={styles.selectedCoords}>Located: {lat}N · {lng}E</div>}
+          <div className={styles.coords} style={{marginTop:6}}>
+            <div className={styles.coordField}><span className={styles.coordLabel}>LAT</span><input className={styles.coordInput} placeholder="16.4234" value={lat} onChange={(e) => onChangeLat(e.target.value)} /></div>
+            <div className={styles.coordField}><span className={styles.coordLabel}>LNG</span><input className={styles.coordInput} placeholder="73.8812" value={lng} onChange={(e) => onChangeLng(e.target.value)} /></div>
+          </div>
         </div>
       )}
     </div>
