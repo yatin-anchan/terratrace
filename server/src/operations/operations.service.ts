@@ -54,7 +54,28 @@ export class OperationsService {
   }
 
   async remove(id: string) {
-    await this.db.delete(operations).where(eq(operations.id, id))
-    return { deleted: true }
+  // Delete all related records first to avoid FK constraint errors
+  const tables = [
+    'simulation_runs',
+    'search_sectors', 
+    'log_entries',
+    'evidence',
+    'subjects',
+    'basecamps',
+    'pois',
+  ]
+
+  for (const table of tables) {
+    try {
+      await this.db.execute(
+        `DELETE FROM ${table} WHERE operation_id = '${id}'`
+      )
+    } catch {
+      // ignore if table doesn't exist or no rows
+    }
   }
+
+  await this.db.delete(operations).where(eq(operations.id, id))
+  return { deleted: true }
+}
 }
