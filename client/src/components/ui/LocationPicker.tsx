@@ -22,12 +22,12 @@ export default function LocationPicker({ lat, lng, onChangeLat, onChangeLng, lab
   const [searching, setSearching] = useState(false)
   const [pickActive, setPickActive] = useState(false)
   const [pickError, setPickError] = useState('')
-  const searchTimeout = useRef<ReturnType<typeof setTimeout>>()
+  const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleSearch = async (q: string) => {
     setQuery(q)
     if (q.length < 3) { setResults([]); return }
-    clearTimeout(searchTimeout.current)
+    if (searchTimeout.current) clearTimeout(searchTimeout.current)
     searchTimeout.current = setTimeout(async () => {
       setSearching(true)
       try {
@@ -92,19 +92,19 @@ export default function LocationPicker({ lat, lng, onChangeLat, onChangeLng, lab
               {results.map((r, i) => (
                 <div key={i} className={styles.result} onClick={() => pickResult(r)}>
                   <div className={styles.resultName}>{r.display_name.split(',').slice(0,2).join(', ')}</div>
-                  <div className={styles.resultCoords}>{parseFloat(r.lat).toFixed(4)}N · {parseFloat(r.lon).toFixed(4)}E</div>
+                  <div className={styles.resultCoords}>{parseFloat(r.lat).toFixed(4)}N ï¿½ {parseFloat(r.lon).toFixed(4)}E</div>
                 </div>
               ))}
             </div>
           )}
-          {lat && lng && <div className={styles.selectedCoords}>Selected: {lat}N · {lng}E</div>}
+          {lat && lng && <div className={styles.selectedCoords}>Selected: {lat}N ï¿½ {lng}E</div>}
         </div>
       )}
       {mode === 'pick' && (
         <div className={styles.pickWrap}>
           {pickActive && <div className={styles.searchNote}>Getting your location...</div>}
           {pickError && <div className={styles.pickError}>{pickError}</div>}
-          {lat && lng && !pickActive && <div className={styles.selectedCoords}>Located: {lat}N · {lng}E</div>}
+          {lat && lng && !pickActive && <div className={styles.selectedCoords}>Located: {lat}N ï¿½ {lng}E</div>}
           <div className={styles.coords} style={{marginTop:6}}>
             <div className={styles.coordField}><span className={styles.coordLabel}>LAT</span><input className={styles.coordInput} placeholder="16.4234" value={lat} onChange={(e) => onChangeLat(e.target.value)} /></div>
             <div className={styles.coordField}><span className={styles.coordLabel}>LNG</span><input className={styles.coordInput} placeholder="73.8812" value={lng} onChange={(e) => onChangeLng(e.target.value)} /></div>
