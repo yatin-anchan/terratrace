@@ -39,6 +39,7 @@ export interface Operation {
   startDate: string
   operationalDays: number
   notes: string
+  areaOfInterest: { lat: number; lng: number } | null
   createdAt: string
   updatedAt: string
   subjectCount?: number
