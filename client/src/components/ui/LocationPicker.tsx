@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import styles from './LocationPicker.module.css'
 
 interface Props {
@@ -15,13 +15,19 @@ interface NominatimResult {
   lon: string
 }
 
-export default function LocationPicker({ lat, lng, onChangeLat, onChangeLng, label = 'LOCATION' }: Props) {
-  const [mode, setMode] = useState<'manual' | 'search' | 'pick'>('manual')
-  const [query, setQuery] = useState('')
+export default function LocationPicker({
+  lat,
+  lng,
+  onChangeLat,
+  onChangeLng,
+  label = 'LOCATION',
+}: Props) {
+  const [mode, setMode]       = useState<'manual' | 'search' | 'pick'>('manual')
+  const [query, setQuery]     = useState('')
   const [results, setResults] = useState<NominatimResult[]>([])
   const [searching, setSearching] = useState(false)
   const [pickActive, setPickActive] = useState(false)
-  const [pickError, setPickError] = useState('')
+  const [pickError, setPickError]   = useState('')
   const searchTimeout = useRef<ReturnType<typeof setTimeout>>()
 
   const handleSearch = async (q: string) => {
@@ -52,46 +58,57 @@ export default function LocationPicker({ lat, lng, onChangeLat, onChangeLng, lab
     setQuery(r.display_name.split(',')[0])
   }
 
-  // For "pick on map" we use browser geolocation as a fallback
-  // and show instructions to copy from the map
   const handlePickMode = () => {
-  setMode('pick')
-  setPickActive(true)
-  setPickError('')
-  if (!navigator.geolocation) {
-    setPickError('Geolocation not supported. Use manual or search.')
-    setPickActive(false)
-    return
+    setMode('pick')
+    setPickActive(true)
+    setPickError('')
+
+    if (!navigator.geolocation) {
+      setPickError('Geolocation not supported. Use manual or search.')
+      setPickActive(false)
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        onChangeLat(pos.coords.latitude.toFixed(5))
+        onChangeLng(pos.coords.longitude.toFixed(5))
+        setPickActive(false)
+      },
+      (_err) => {
+        setPickError('Could not get location. Enter manually or use search.')
+        setPickActive(false)
+      },
+      { timeout: 5000 }
+    )
   }
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      onChangeLat(pos.coords.latitude.toFixed(5))
-      onChangeLng(pos.coords.longitude.toFixed(5))
-      setPickActive(false)
-    },
-    (_err) => {
-      setPickError('Could not get location. Enter manually or search.')
-      setPickActive(false)
-    },
-    { timeout: 5000 }
-  )
-}
 
   return (
     <div className={styles.wrap}>
       <div className={styles.header}>
         <span className={styles.label}>{label}</span>
         <div className={styles.modes}>
-          {(['manual','search','pick'] as const).map((m) => (
-            <button
-              key={m}
-              className={`${styles.modeBtn} ${mode === m ? styles.modeBtnActive : ''}`}
-              onClick={() => { setMode(m); if (m === 'pick') handlePickMode() }}
-              type="button"
-            >
-              {m === 'manual' ? 'MANUAL' : m === 'search' ? 'SEARCH' : 'MY LOCATION'}
-            </button>
-          ))}
+          <button
+            type="button"
+            className={`${styles.modeBtn} ${mode === 'manual' ? styles.modeBtnActive : ''}`}
+            onClick={() => setMode('manual')}
+          >
+            MANUAL
+          </button>
+          <button
+            type="button"
+            className={`${styles.modeBtn} ${mode === 'search' ? styles.modeBtnActive : ''}`}
+            onClick={() => setMode('search')}
+          >
+            SEARCH
+          </button>
+          <button
+            type="button"
+            className={`${styles.modeBtn} ${mode === 'pick' ? styles.modeBtnActive : ''}`}
+            onClick={handlePickMode}
+          >
+            MY LOCATION
+          </button>
         </div>
       </div>
 
@@ -126,13 +143,23 @@ export default function LocationPicker({ lat, lng, onChangeLat, onChangeLng, lab
             value={query}
             onChange={(e) => handleSearch(e.target.value)}
           />
-          {searching && <div className={styles.searchNote}>Searching...</div>}
+          {searching && (
+            <div className={styles.searchNote}>Searching...</div>
+          )}
           {results.length > 0 && (
             <div className={styles.results}>
               {results.map((r, i) => (
-                <div key={i} className={styles.result} onClick={() => pickResult(r)}>
-                  <div className={styles.resultName}>{r.display_name.split(',').slice(0, 2).join(', ')}</div>
-                  <div className={styles.resultCoords}>{parseFloat(r.lat).toFixed(4)}N · {parseFloat(r.lon).toFixed(4)}E</div>
+                <div
+                  key={i}
+                  className={styles.result}
+                  onClick={() => pickResult(r)}
+                >
+                  <div className={styles.resultName}>
+                    {r.display_name.split(',').slice(0, 2).join(', ')}
+                  </div>
+                  <div className={styles.resultCoords}>
+                    {parseFloat(r.lat).toFixed(4)}N · {parseFloat(r.lon).toFixed(4)}E
+                  </div>
                 </div>
               ))}
             </div>
@@ -147,8 +174,12 @@ export default function LocationPicker({ lat, lng, onChangeLat, onChangeLng, lab
 
       {mode === 'pick' && (
         <div className={styles.pickWrap}>
-          {pickActive && <div className={styles.searchNote}>Getting your location...</div>}
-          {pickError && <div className={styles.pickError}>{pickError}</div>}
+          {pickActive && (
+            <div className={styles.searchNote}>Getting your location...</div>
+          )}
+          {pickError && (
+            <div className={styles.pickError}>{pickError}</div>
+          )}
           {lat && lng && !pickActive && (
             <div className={styles.selectedCoords}>
               Located: {lat}N · {lng}E
@@ -158,11 +189,21 @@ export default function LocationPicker({ lat, lng, onChangeLat, onChangeLng, lab
             <div className={styles.coords} style={{ marginTop: 6 }}>
               <div className={styles.coordField}>
                 <span className={styles.coordLabel}>LAT</span>
-                <input className={styles.coordInput} placeholder="16.4234" value={lat} onChange={(e) => onChangeLat(e.target.value)} />
+                <input
+                  className={styles.coordInput}
+                  placeholder="16.4234"
+                  value={lat}
+                  onChange={(e) => onChangeLat(e.target.value)}
+                />
               </div>
               <div className={styles.coordField}>
                 <span className={styles.coordLabel}>LNG</span>
-                <input className={styles.coordInput} placeholder="73.8812" value={lng} onChange={(e) => onChangeLng(e.target.value)} />
+                <input
+                  className={styles.coordInput}
+                  placeholder="73.8812"
+                  value={lng}
+                  onChange={(e) => onChangeLng(e.target.value)}
+                />
               </div>
             </div>
           )}
