@@ -144,7 +144,7 @@ export default function Results({ operationId }: { operationId: string }) {
             TOP HOTSPOTS
             {hasResults && <span style={{ color: 'var(--success)', fontSize: 10 }}>LIVE</span>}
           </div>
-          {displayHotspots.map((h, i) => (
+          {displayHotspots.map((h: any, i: number) => (
             <div key={i} className={styles.card} style={{ marginBottom: 6 }}>
               <div className={styles.cardTitle} style={{
                 color: i === 0 ? 'var(--danger)' : i === 1 ? 'var(--warn)' : 'var(--accent)',
