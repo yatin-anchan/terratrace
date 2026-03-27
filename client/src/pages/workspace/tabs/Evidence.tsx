@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import client from '../../../api/client'
 import LocationPicker from '../../../components/ui/LocationPicker'
 import styles from './tabs.module.css'
+import { subscribeOperationRefresh } from '../../../lib/operationSync'
 
 const EVIDENCE_TYPES = [
   'witness_statement','cctv_sighting','mobile_ping',
@@ -49,11 +50,19 @@ export default function Evidence({ operationId }: { operationId: string }) {
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }))
 
   useEffect(() => {
+    if (!operationId) return
+    const fetchdata = async () => {
     client.get(`/evidence/operation/${operationId}`)
       .then((r) => setItems(r.data))
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [operationId])
+  }
+  fetchdata()
+  
+  const unsubscribe = subscribeOperationRefresh(operationId, () => {
+    fetchdata()}
+  )
+}, [operationId])
 
   const handleAdd = async () => {
     setSaving(true)

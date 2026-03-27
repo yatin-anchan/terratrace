@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import client from '../../../api/client'
 import styles from './tabs.module.css'
+import { subscribeOperationRefresh } from '../../../lib/operationSync'
 
 interface FieldResult {
   id: string
@@ -27,11 +28,18 @@ export default function FieldResults({ operationId }: { operationId: string }) {
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }))
 
   useEffect(() => {
+    if (!operationId) return
+     const fetchdata = async () => {
     client.get(`/field-results/operation/${operationId}`)
       .then((r) => setResults(r.data))
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [operationId])
+  }
+  fetchdata()
+  const unsubscribe = subscribeOperationRefresh(operationId, () => {
+    fetchdata()}
+  )
+}, [operationId])
 
   const handleAdd = async () => {
     if (!form.sectorName.trim()) { setError('Sector name is required.'); return }

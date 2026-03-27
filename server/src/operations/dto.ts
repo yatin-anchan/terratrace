@@ -5,8 +5,9 @@ export class CreateOperationDto {
   operationalDays?: number
   notes?: string
   status?: string
+  areaOfInterest?: { lat: number; lng: number } | null
+  mode?: string
 }
-
 export class UpdateOperationDto {
   name?: string
   status?: string
@@ -14,4 +15,5 @@ export class UpdateOperationDto {
   searchRadius?: number
   operationalDays?: number
   notes?: string
+  mode?: string
 }

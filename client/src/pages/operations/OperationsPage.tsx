@@ -14,16 +14,17 @@ export default function OperationsPage() {
   const { operations, setOperations, removeOperation, addOperation, selectOperation } =
     useOperationStore()
 
-  const [search, setSearch]   = useState('')
+  const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [showNew, setShowNew] = useState(false)
 
-  const [newName,    setNewName]    = useState('')
+  const [newName, setNewName] = useState('')
   const [newTerrain, setNewTerrain] = useState('Forest')
-  const [newRadius,  setNewRadius]  = useState('10')
-  const [newLat,     setNewLat]     = useState('')
-  const [newLng,     setNewLng]     = useState('')
+  const [newRadius, setNewRadius] = useState('10')
+  const [newLat, setNewLat] = useState('')
+  const [newLng, setNewLng] = useState('')
+  const [newMode, setNewMode] = useState<'manual' | 'ai_driven'>('manual')
 
   useEffect(() => {
     getOperations()
@@ -59,16 +60,20 @@ export default function OperationsPage() {
 
   const handleCreate = async () => {
     if (!newName.trim()) return
+
     const op = await createOperation({
       name: newName.trim(),
       terrainRegion: newTerrain,
       status: 'draft',
       operationalDays: 7,
       searchRadius: parseFloat(newRadius) || 10,
-      areaOfInterest: newLat && newLng
-        ? { lat: parseFloat(newLat), lng: parseFloat(newLng) }
-        : null,
+      areaOfInterest:
+        newMode === 'manual' && newLat && newLng
+          ? { lat: parseFloat(newLat), lng: parseFloat(newLng) }
+          : null,
+      mode: newMode,
     })
+
     addOperation(op)
     selectOperation(op)
     setShowNew(false)
@@ -77,12 +82,12 @@ export default function OperationsPage() {
     setNewLng('')
     setNewRadius('10')
     setNewTerrain('Forest')
+    setNewMode('manual')
+    navigate(`/workspace/${op.id}`)
   }
 
   const toggleSelect = (id: string) =>
-    setSelected((s) =>
-      s.includes(id) ? s.filter((x) => x !== id) : [...s, id]
-    )
+    setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))
 
   return (
     <div className={styles.page}>
@@ -109,6 +114,44 @@ export default function OperationsPage() {
         <div className={styles.newModal}>
           <div className={styles.newCard}>
             <p className={styles.newTitle}>NEW OPERATION</p>
+
+            <label className={styles.newLabel}>OPERATION MODE</label>
+            <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+              {(['manual', 'ai_driven'] as const).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setNewMode(m)}
+                  style={{
+                    flex: 1,
+                    padding: '12px 8px',
+                    border: `2px solid ${newMode === m ? 'var(--accent)' : 'var(--border2)'}`,
+                    background: newMode === m ? 'rgba(232,200,122,0.08)' : 'var(--bg3)',
+                    color: newMode === m ? 'var(--accent)' : 'var(--text3)',
+                    cursor: 'pointer',
+                    borderRadius: 4,
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 11,
+                    letterSpacing: '1px',
+                    transition: 'all 0.15s',
+                    textAlign: 'center',
+                  }}
+                >
+                  {m === 'manual' ? '⚙ MANUAL' : '◈ AI DRIVEN'}
+                  <div
+                    style={{
+                      fontSize: 9,
+                      marginTop: 4,
+                      opacity: 0.6,
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    {m === 'manual'
+                      ? 'You control all data entry'
+                      : 'AI guides the operation via chat'}
+                  </div>
+                </button>
+              ))}
+            </div>
 
             <label className={styles.newLabel}>OPERATION NAME</label>
             <input
@@ -143,24 +186,49 @@ export default function OperationsPage() {
               onChange={(e) => setNewRadius(e.target.value)}
             />
 
-            <div style={{ marginBottom: 14 }}>
-              <LocationPicker
-                label="AREA OF INTEREST (OPERATION CENTER)"
-                lat={newLat}
-                lng={newLng}
-                onChangeLat={setNewLat}
-                onChangeLng={setNewLng}
-              />
-            </div>
+            {newMode === 'manual' ? (
+              <div style={{ marginBottom: 14 }}>
+                <LocationPicker
+                  label="AREA OF INTEREST (OPERATION CENTER)"
+                  lat={newLat}
+                  lng={newLng}
+                  onChangeLat={setNewLat}
+                  onChangeLng={setNewLng}
+                />
+              </div>
+            ) : (
+              <div
+                style={{
+                  marginBottom: 14,
+                  padding: '12px',
+                  background: 'var(--bg3)',
+                  border: '1px solid var(--border2)',
+                  borderRadius: 4,
+                  color: 'var(--text2)',
+                  fontSize: 11,
+                  lineHeight: 1.6,
+                }}
+              >
+                <div
+                  style={{
+                    color: 'var(--accent)',
+                    fontFamily: 'var(--font-mono)',
+                    marginBottom: 6,
+                  }}
+                >
+                  AI-DRIVEN SETUP
+                </div>
+                The AI assistant will collect the missing person’s last known location
+                during guided setup. The user can type coordinates manually or pick a
+                point on the map later.
+              </div>
+            )}
 
             <div className={styles.newActions}>
               <button className={styles.btnNew} onClick={handleCreate}>
                 CREATE
               </button>
-              <button
-                className={styles.btnCancel}
-                onClick={() => setShowNew(false)}
-              >
+              <button className={styles.btnCancel} onClick={() => setShowNew(false)}>
                 CANCEL
               </button>
             </div>
@@ -172,8 +240,7 @@ export default function OperationsPage() {
         <div className={styles.empty}>LOADING OPERATIONS...</div>
       ) : filtered.length === 0 ? (
         <div className={styles.empty}>
-          NO OPERATIONS FOUND.{' '}
-          <span onClick={() => setShowNew(true)}>CREATE ONE →</span>
+          NO OPERATIONS FOUND. <span onClick={() => setShowNew(true)}>CREATE ONE →</span>
         </div>
       ) : (
         <div className={styles.grid}>
@@ -195,10 +262,21 @@ export default function OperationsPage() {
                 <span className={styles.cardName}>{op.name}</span>
                 <Badge status={op.status} />
               </div>
+
               <div className={styles.cardMeta}>
                 <span>{op.terrainRegion || 'Unknown terrain'}</span>
                 <span>{op.searchRadius ? `${op.searchRadius}km radius` : ''}</span>
+                <span
+                  style={{
+                    color: op.mode === 'ai_driven' ? 'var(--accent)' : 'var(--text3)',
+                    fontSize: 9,
+                    letterSpacing: '0.5px',
+                  }}
+                >
+                  {op.mode === 'ai_driven' ? '◈ AI DRIVEN' : '⚙ MANUAL'}
+                </span>
               </div>
+
               <div className={styles.progBg}>
                 <div
                   className={styles.progFill}
@@ -207,16 +285,23 @@ export default function OperationsPage() {
                   }}
                 />
               </div>
+
               <div className={styles.cardActions}>
                 <button
                   className={styles.btnOpen}
-                  onClick={(e) => { e.stopPropagation(); handleOpen(op) }}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleOpen(op)
+                  }}
                 >
                   OPEN
                 </button>
                 <button
                   className={styles.btnDelCard}
-                  onClick={(e) => { e.stopPropagation(); handleDelete(op.id) }}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleDelete(op.id)
+                  }}
                 >
                   DELETE
                 </button>

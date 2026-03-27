@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getOperation, updateOperation } from '../../../api/operations'
 import styles from './tabs.module.css'
+import { subscribeOperationRefresh } from '../../../lib/operationSync'
 
 const STATUS_OPTIONS = ['draft','active','suspended','escalated','closed','archived']
 const TERRAIN_OPTIONS = ['Forest','Urban','Coastal','Highland','Rural','Desert','Mixed']
@@ -13,10 +14,18 @@ export default function OpDetails({ operationId }: { operationId: string }) {
   const [error, setError] = useState('')
 
   useEffect(() => {
+    if (!operationId) return
+    const fetchdata = async () => {
+
     getOperation(operationId)
       .then((data) => { setOp(data); setForm(data) })
       .catch(() => setError('Failed to load operation.'))
-  }, [operationId])
+  }
+  fetchdata()
+  const unsubscribe = subscribeOperationRefresh(operationId, () => {
+    fetchdata()}
+  )
+}, [operationId])
 
   const handleSave = async () => {
     setSaving(true)

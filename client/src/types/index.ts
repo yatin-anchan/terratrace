@@ -35,6 +35,7 @@ export interface Operation {
   name: string
   status: OperationStatus
   terrainRegion: string
+  mode?: string
   searchRadius: number
   startDate: string
   operationalDays: number

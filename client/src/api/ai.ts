@@ -1,27 +1,21 @@
 import client from './client'
 
-export const sendChatMessage = async (
+export async function sendChatMessage(
   operationId: string,
   message: string,
-  history: { role: 'user' | 'assistant'; content: string }[]
-) => {
-  const res = await client.post<{ reply: string; tokens: number }>('/ai/chat', {
-    operationId,
-    message,
-    history,
-  })
+  history: { role: 'user' | 'assistant'; content: string }[],
+  mode: string = 'manual'
+) {
+  const res = await client.post('/ai/chat', { operationId, message, history, mode })
   return res.data
 }
 
-export const summarizeOperation = async (operationId: string) => {
-  const res = await client.post<{ summary: string }>(`/ai/summarize/${operationId}`)
+export async function summarizeOperation(operationId: string) {
+  const res = await client.post(`/ai/summarize/${operationId}`)
   return res.data
 }
 
-export const explainSector = async (sectorName: string, probability: number) => {
-  const res = await client.post<{ explanation: string }>('/ai/explain-sector', {
-    sectorName,
-    probability,
-  })
+export async function explainSector(sectorName: string, probability: number) {
+  const res = await client.post('/ai/explain-sector', { sectorName, probability })
   return res.data
 }

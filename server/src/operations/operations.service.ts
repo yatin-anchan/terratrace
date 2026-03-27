@@ -27,20 +27,22 @@ export class OperationsService {
   }
 
   async create(dto: CreateOperationDto, userId: string) {
-    const [op] = await this.db
-      .insert(operations)
-      .values({
-        name: dto.name,
-        terrainRegion: dto.terrainRegion || 'Unknown',
-        searchRadius: dto.searchRadius || 10,
-        operationalDays: dto.operationalDays || 7,
-        notes: dto.notes || '',
-        status: (dto.status as any) || 'draft',
-        createdBy: userId,
-      })
-      .returning()
-    return op
-  }
+  const [op] = await this.db
+    .insert(operations)
+    .values({
+      name: dto.name,
+      terrainRegion: dto.terrainRegion || 'Unknown',
+      searchRadius: dto.searchRadius || 10,
+      operationalDays: dto.operationalDays || 7,
+      notes: dto.notes || '',
+      status: (dto.status as any) || 'draft',
+      areaOfInterest: dto.areaOfInterest ?? null,
+      mode: dto.mode || 'manual',
+      createdBy: userId,
+    })
+    .returning()
+  return op
+}
 
   async update(id: string, dto: UpdateOperationDto) {
     const [op] = await this.db

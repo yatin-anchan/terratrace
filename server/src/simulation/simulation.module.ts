@@ -5,5 +5,6 @@ import { SimulationController } from './simulation.controller'
 @Module({
   providers: [SimulationService],
   controllers: [SimulationController],
+  exports: [SimulationService],
 })
 export class SimulationModule {}

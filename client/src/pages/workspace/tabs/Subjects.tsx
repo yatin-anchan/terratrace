@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import client from '../../../api/client'
 import LocationPicker from '../../../components/ui/LocationPicker'
 import styles from './tabs.module.css'
+import { subscribeOperationRefresh } from '../../../lib/operationSync'
 
 interface Subject {
   id: string
@@ -60,11 +61,19 @@ export default function Subjects({ operationId }: { operationId: string }) {
   })
 
   useEffect(() => {
+    if (!operationId) return
+     const fetchdata = async () => {
     client.get(`/subjects/operation/${operationId}`)
       .then((r) => setSubjects(r.data))
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [operationId])
+  }
+  fetchdata()
+  
+  const unsubscribe = subscribeOperationRefresh(operationId, () => {
+    fetchdata()}
+  )
+}, [operationId])
 
   const handleAdd = async () => {
     if (!form.name.trim()) { setError('Name is required.'); return }

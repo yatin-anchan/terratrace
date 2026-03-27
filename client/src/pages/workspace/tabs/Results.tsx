@@ -4,6 +4,7 @@ import { useSimulationStore } from '../../../store/useSimulationStore'
 import { getSimulations } from '../../../api/simulation'
 import { explainSector, summarizeOperation } from '../../../api/ai'
 import styles from './tabs.module.css'
+import { subscribeOperationRefresh } from '../../../lib/operationSync'
 
 marked.setOptions({ breaks: true, gfm: true })
 
@@ -17,10 +18,17 @@ export default function Results({ operationId }: { operationId: string }) {
   const [summaryLoading, setSummaryLoading] = useState(false)
 
   useEffect(() => {
+    if (!operationId) return
+     const fetchdata = async () => {
     getSimulations(operationId)
       .then(setPastSims)
       .catch(() => {})
-  }, [operationId, hasResults])
+  }
+  fetchdata()
+  const unsubscribe = subscribeOperationRefresh(operationId, () => {
+    fetchdata()}
+  )
+}, [operationId, hasResults])
 
   const latestSim = pastSims[pastSims.length - 1]
   const displayHotspots = hasResults ? hotspots : (latestSim?.hotspots ?? [])
